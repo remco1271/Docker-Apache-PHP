@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Upgrade system
+apt-get update & apt-get -y dist-upgrade
+
+# clone iPXE repository
+cd /var/tmp/ && git clone https://git.ipxe.org/ipxe.git
+chown -R www-data:www-data /var/run/ipxe-build/ipxe-build-cache.lock /var/cache/ipxe-build /var/run/ipxe-build /var/tmp/ipxe-build /var/tmp/ipxe
+
+# clone buildweb repository
+cd /var/www && git clone https://github.com/xbgmsharp/ipxe-buildweb.git
+cd /var/www/ipxe-buildweb
+cp parseheaders.pl /var/tmp/ipxe/src/util/
+
+exec /usr/sbin/apache2 -D FOREGROUND
