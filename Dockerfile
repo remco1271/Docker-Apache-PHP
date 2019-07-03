@@ -86,6 +86,7 @@ RUN \
 	mkdir -p /var/tmp/ipxe-build && \
 	touch /var/run/ipxe-build/ipxe-build-cache.lock && \
 	# Prepare the git buildweb repository
+	mkdir -p /config && \
 	mkdir -p /var/www && \
 	rm -rf /tmp/* /tmp/.[!.]*
 
