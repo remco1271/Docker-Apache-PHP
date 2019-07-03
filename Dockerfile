@@ -80,14 +80,15 @@ RUN \
 	echo /var/lock/apache2 > /etc/container_environment/APACHE_LOCK_DIR && \
 	echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
 	echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
-	#  Prepare iPXE directory
+	# Prepare iPXE directory
 	mkdir -p /var/cache/ipxe-build  && \
 	mkdir -p /var/run/ipxe-build  && \
 	mkdir -p /var/tmp/ipxe-build && \
 	touch /var/run/ipxe-build/ipxe-build-cache.lock && \
 	# Prepare the git buildweb repository
-	mkdir -p /config && \
 	mkdir -p /var/www && \
+	# Prepare config folder
+	mkdir -p /config && \
 	rm -rf /tmp/* /tmp/.[!.]*
 
 # Expose Ports
