@@ -34,7 +34,8 @@ RUN \
 		libc6-dev \
 		libssl-dev \
 		libstdc++6-4.7-dev \
-		libc-dev-bin liblzma-dev \
+		libc-dev-bin \
+		liblzma-dev \
 		# Install CGI Perl dependencies
 		liburi-perl \
 		libfcgi-perl \
@@ -65,8 +66,8 @@ RUN \
 	rm /etc/apache2/apache2.conf && \
 	ln -s /config/proxy-config.conf /etc/apache2/sites-available/000-default.conf && \
 	ln -s /var/log/apache2 /logs && \
-	rm -rf /var/lib/apt/lists/* /tmp/* /tmp/.[!.]*
-	
+	rm -rf /tmp/* /tmp/.[!.]*
+
 # Copy files
 COPY ipxe /tmp/ipxe/
 
@@ -85,8 +86,10 @@ RUN \
 	mkdir -p /var/run/ipxe-build  && \
 	mkdir -p /var/tmp/ipxe-build && \
 	touch /var/run/ipxe-build/ipxe-build-cache.lock && \
+	cd /var/tmp/ && git clone https://git.ipxe.org/ipxe.git && \
 	# Prepare the git buildweb repository
 	mkdir -p /var/www && \
+	cd /var/www && git clone https://github.com/xbgmsharp/ipxe-buildweb.git && \
 	# Prepare config folder
 	mkdir -p /config && \
 	rm -rf /tmp/* /tmp/.[!.]*
