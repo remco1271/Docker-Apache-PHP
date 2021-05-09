@@ -1,11 +1,29 @@
 #!/bin/bash
 
 # git pull latest iPXE repository
-cd /var/tmp/ipxe && git pull
-chown -R www-data:www-data /var/run/ipxe-build/ipxe-build-cache.lock /var/cache/ipxe-build /var/run/ipxe-build /var/tmp/ipxe-build /var/tmp/ipxe
+if [ -z "$(ls -A '/ipxe')" ]; then
+	echo "[info] clone ipxe..."
+	git clone https://git.ipxe.org/ipxe.git /ipxe
+else
+	echo "[info] revert ipxe local changes and pull from github..."
+	git -C /ipxe checkout . && git -C /ipxe pull
+fi
 
 # git pull latest buildweb
-cd /var/www/ipxe-buildweb && git pull
-cp parseheaders.pl /var/tmp/ipxe/src/util/
+if [ -z "$(ls -A '/ipxe-buildweb')" ]; then
+	echo "[info] clone ipxe-buildweb..."
+	git clone https://github.com/xbgmsharp/ipxe-buildweb.git /ipxe-buildweb
+else
+	echo "[info] revert ipxe-buildweb local changes and pull from github..."
+	git -C /ipxe-buildweb checkout . && git -C /ipxe-buildweb pull
+fi
+
+if [ -f '/ipxe-buildweb/parseheaders.pl' ]; then
+	echo "[info] copying parseheaders.pl '/ipxe-buildweb/parseheaders.pl' to '/ipxe/src/util/'..."
+	cp /ipxe-buildweb/parseheaders.pl /ipxe/src/util/
+fi
+
+echo "[info] chown folders..."
+chown -R www-data:www-data /var/run/ipxe-build/ipxe-build-cache.lock /var/cache/ipxe-build /var/run/ipxe-build /var/tmp/ipxe-build /var/tmp/ipxe
 
 exec /usr/sbin/apache2 -D FOREGROUND

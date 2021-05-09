@@ -86,16 +86,16 @@ RUN \
 	mkdir -p /var/run/ipxe-build  && \
 	mkdir -p /var/tmp/ipxe-build && \
 	touch /var/run/ipxe-build/ipxe-build-cache.lock && \
-	cd /var/tmp/ && git clone https://git.ipxe.org/ipxe.git && \
 	# Prepare the git buildweb repository
 	mkdir -p /var/www && \
-	cd /var/www && git clone https://github.com/xbgmsharp/ipxe-buildweb.git && \
 	# Prepare config folder
 	mkdir -p /config && \
+	ln -s /var/tmp/ipxe /ipxe && \
+	ln -s /var/www/ipxe-buildweb /ipxe-buildweb && \
 	rm -rf /tmp/* /tmp/.[!.]*
 
 # Expose Ports
 EXPOSE 80
 
 # The www directory and proxy config location
-VOLUME ["/logs"]
+VOLUME ["/logs","/ipxe", "/ipxe-buildweb"]
