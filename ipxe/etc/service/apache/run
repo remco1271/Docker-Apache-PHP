@@ -6,7 +6,7 @@ if [ -z "$(ls -A '/ipxe')" ]; then
 	git clone https://git.ipxe.org/ipxe.git /ipxe
 else
 	echo "[info] revert ipxe local changes and pull from github..."
-	git -C /ipxe checkout . && git -C /ipxe pull
+	rm -f /ipxe/.git/index && rm -f /ipxe/.git/index.lock && git -C /ipxe checkout . && git -C /ipxe pull
 fi
 
 # git pull latest buildweb
@@ -15,7 +15,7 @@ if [ -z "$(ls -A '/ipxe-buildweb')" ]; then
 	git clone https://github.com/xbgmsharp/ipxe-buildweb.git /ipxe-buildweb
 else
 	echo "[info] revert ipxe-buildweb local changes and pull from github..."
-	git -C /ipxe-buildweb checkout . && git -C /ipxe-buildweb pull
+	rm -f /ipxe-buildweb/.git/index && rm -f /ipxe-buildweb/.git/index.lock && git -C /ipxe-buildweb checkout . && git -C /ipxe-buildweb pull
 fi
 
 if [ -f '/ipxe-buildweb/parseheaders.pl' ]; then
