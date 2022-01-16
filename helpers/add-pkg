@@ -58,7 +58,7 @@ install_pkg_debian() {
     fi
 
     if [ -n "$1" ]; then
-        apt-get -q update
+        apt-get -q update && apt-get -yq upgrade
         apt-get -q install -y --no-install-recommends "$@"
     fi
 }

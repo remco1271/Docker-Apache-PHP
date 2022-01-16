@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Upgrade system
+apt-get update && apt-get -yq upgrade
+
 # git pull latest iPXE repository
 if [ -z "$(ls -A '/ipxe')" ]; then
 	echo "[info] clone ipxe..."

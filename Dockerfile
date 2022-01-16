@@ -16,7 +16,7 @@ CMD ["/sbin/my_init"]
 WORKDIR /tmp
 
 # Copy files
-COPY rootfs /tmp/rootfs/
+COPY helpers/* /usr/local/bin/
 
 RUN \
 	# Configure user nobody to match unRAID's settings
@@ -24,8 +24,6 @@ RUN \
 	usermod -g 100 nobody && \
 	usermod -d /home nobody && \
 	chown -R nobody:users /home && \
-	chmod -R +x /tmp/rootfs && \
-	cp -R /tmp/rootfs/* / && \
 	add-pkg \
 		# Install basic compilation tools and dev libraries
 		make \
