@@ -92,10 +92,11 @@ RUN \
 	mkdir -p /config && \
 	ln -s /var/tmp/ipxe /ipxe && \
 	ln -s /var/www/ipxe-buildweb /ipxe-buildweb && \
+	ln -s /var/cache/ipxe-build /cache && \
 	rm -rf /tmp/* /tmp/.[!.]*
 
 # Expose Ports
 EXPOSE 80
 
 # The www directory and proxy config location
-VOLUME ["/logs","/ipxe", "/ipxe-buildweb"]
+VOLUME ["/logs","/ipxe", "/ipxe-buildweb", "/cache"]
