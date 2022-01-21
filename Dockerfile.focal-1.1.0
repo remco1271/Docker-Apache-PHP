@@ -26,6 +26,8 @@ RUN \
 	chown -R nobody:users /home && \
 	add-pkg \
 		# Install basic compilation tools and dev libraries
+		make \
+		gcc \
 		iasl \
 		lzma-dev \
 		mtools \
@@ -82,6 +84,7 @@ RUN \
 	echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
 	echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
 	# Prepare iPXE directory
+	ln -s /var/cache/ipxe-build /cache && \
 	mkdir -p /var/cache/ipxe-build  && \
 	mkdir -p /var/run/ipxe-build  && \
 	mkdir -p /var/tmp/ipxe-build && \
@@ -92,7 +95,6 @@ RUN \
 	mkdir -p /config && \
 	ln -s /var/tmp/ipxe /ipxe && \
 	ln -s /var/www/ipxe-buildweb /ipxe-buildweb && \
-	ln -s /var/cache/ipxe-build /cache && \
 	rm -rf /tmp/* /tmp/.[!.]*
 
 # Expose Ports
