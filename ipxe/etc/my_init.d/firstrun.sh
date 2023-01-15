@@ -24,13 +24,16 @@ fi
 # Upgrade system
 apt-get update && apt-get -yq upgrade
 
+# Silence all safe.directory warnings
+git config --system --add safe.directory '*'
+
 # git pull latest iPXE repository
 if [ -z "$(ls -A '/ipxe')" ]; then
 	echo "[info] clone ipxe..."
 	git clone https://git.ipxe.org/ipxe.git /ipxe
 else
 	echo "[info] revert ipxe local changes and pull from github..."
-	rm -f /ipxe/.git/index && rm -f /ipxe/.git/index.lock && git -C /ipxe checkout -f && git -C /ipxe pull
+	rm -f /ipxe/.git/index && rm -f /ipxe/.git/index.lock && git config --system --add safe.directory /ipxe && git -C /ipxe checkout -f && git -C /ipxe pull
 fi
 
 # git pull latest buildweb
@@ -39,7 +42,7 @@ if [ -z "$(ls -A '/ipxe-buildweb')" ]; then
 	git clone https://github.com/xbgmsharp/ipxe-buildweb.git /ipxe-buildweb
 else
 	echo "[info] revert ipxe-buildweb local changes and pull from github..."
-	rm -f /ipxe-buildweb/.git/index && rm -f /ipxe-buildweb/.git/index.lock && git -C /ipxe-buildweb checkout -f && git -C /ipxe-buildweb pull
+	rm -f /ipxe-buildweb/.git/index && rm -f /ipxe-buildweb/.git/index.lock && git config --system --add safe.directory /ipxe-buildweb && git -C /ipxe-buildweb checkout -f && git -C /ipxe-buildweb pull
 fi
 
 if [ -f '/ipxe-buildweb/parseheaders.pl' ]; then
