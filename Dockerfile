@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.18
+FROM phusion/baseimage:focal-1.2.0
 MAINTAINER angelics
 
 # Set correct environment variables
@@ -28,23 +28,28 @@ RUN \
 		# Install basic compilation tools and dev libraries
 		make \
 		gcc \
-		zlib1g-dev \
-		libc6-dev \
-		libssl-dev \
-		libstdc++6-4.7-dev \
-		libc-dev-bin \
+		iasl \
+		lzma-dev \
+		mtools \
+		perl \
+		python \
+        subversion \
+		uuid-dev \
 		liblzma-dev \
+		mtools \
 		# Install CGI Perl dependencies
 		liburi-perl \
 		libfcgi-perl \
 		libconfig-inifiles-perl \
 		libipc-system-simple-perl \
 		libsub-override-perl \
+		libcgi-pm-perl \
 		# Install Git tools
-		git-core \
+		git \
 		# Install Apache 2 with fast CGI and PHP5 module
 		libapache2-mod-fcgid \
-		libapache2-mod-php5 \
+		libapache2-mod-php \
+		apache2 \
 		# Install JSON library Perl
 		libjson-perl \
 		libjson-any-perl \
@@ -53,10 +58,11 @@ RUN \
 		binutils-dev \
 		genisoimage \
 		syslinux \
+		isolinux \
 		# wget
 		wget \
 		&& \
-	a2enmod fcgid php5 && \
+	a2enmod fcgid php7.4 && \
 	service apache2 restart && \
 	# Update apache configuration with this one
 	mv /etc/apache2/sites-available/000-default.conf /etc/apache2/000-default.conf && \
@@ -67,11 +73,9 @@ RUN \
 	rm -rf /tmp/* /tmp/.[!.]*
 
 # Copy files
-COPY ipxe /tmp/ipxe/
+COPY ipxe /
 
 RUN \
-	chmod -R +x /tmp/ipxe && \
-	cp -R /tmp/ipxe/* / && \
 	# Manually set the apache environment variables in order to get apache to work immediately.
 	echo www-data > /etc/container_environment/APACHE_RUN_USER && \
 	echo www-data > /etc/container_environment/APACHE_RUN_GROUP && \
@@ -80,6 +84,7 @@ RUN \
 	echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
 	echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
 	# Prepare iPXE directory
+	ln -s /var/cache/ipxe-build /cache && \
 	mkdir -p /var/cache/ipxe-build  && \
 	mkdir -p /var/run/ipxe-build  && \
 	mkdir -p /var/tmp/ipxe-build && \
@@ -96,4 +101,4 @@ RUN \
 EXPOSE 80
 
 # The www directory and proxy config location
-VOLUME ["/logs","/ipxe", "/ipxe-buildweb"]
+VOLUME ["/logs","/ipxe", "/ipxe-buildweb", "/cache"]
