@@ -3,10 +3,10 @@
 # Check if config exists. If not, copy in the sample config
 if [ -f /config/proxy-config.conf ]; then
   echo "Using existing config file."
+  rm /etc/apache2/000-default.conf
 else
   echo "Creating config from template."
   mv /etc/apache2/000-default.conf /config/proxy-config.conf
-  cp /root/.htpasswd /config/.htpasswd
 fi
 
 # Add Persistent Cron Configuration Capability
@@ -22,35 +22,13 @@ else
 fi
 
 # Upgrade system
-apt-get update && apt-get -yq upgrade
-
+#apt-get update && apt-get -yq upgrade
+# Clean-up system
+#apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Silence all safe.directory warnings
-git config --system --add safe.directory '*'
+#git config --system --add safe.directory '*'
 
-# git pull latest iPXE repository
-if [ -z "$(ls -A '/ipxe')" ]; then
-	echo "[info] clone ipxe..."
-	git clone https://git.ipxe.org/ipxe.git /ipxe
-else
-	echo "[info] revert ipxe local changes and pull from github..."
-	rm -f /ipxe/.git/index && rm -f /ipxe/.git/index.lock && git config --system --add safe.directory /ipxe && git -C /ipxe checkout -f && git -C /ipxe pull
-fi
-
-# git pull latest buildweb
-if [ -z "$(ls -A '/ipxe-buildweb')" ]; then
-	echo "[info] clone ipxe-buildweb..."
-	git clone https://github.com/xbgmsharp/ipxe-buildweb.git /ipxe-buildweb
-else
-	echo "[info] revert ipxe-buildweb local changes and pull from github..."
-	rm -f /ipxe-buildweb/.git/index && rm -f /ipxe-buildweb/.git/index.lock && git config --system --add safe.directory /ipxe-buildweb && git -C /ipxe-buildweb checkout -f && git -C /ipxe-buildweb pull
-fi
-
-if [ -f '/ipxe-buildweb/parseheaders.pl' ]; then
-	echo "[info] copying parseheaders.pl '/ipxe-buildweb/parseheaders.pl' to '/ipxe/src/util/'..."
-	cp /ipxe-buildweb/parseheaders.pl /ipxe/src/util/
-fi
-
-echo "[info] chown folders..."
-chown -R www-data:www-data /var/run/ipxe-build/ipxe-build-cache.lock /var/cache/ipxe-build /var/run/ipxe-build /var/tmp/ipxe-build /var/tmp/ipxe
+echo "[info] Start apache2..."
 
 exec /usr/sbin/apache2 -D FOREGROUND
+#exec service apache2 start
