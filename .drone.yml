@@ -1,0 +1,34 @@
+---
+kind: pipeline
+name: linux-amd64-docker
+type: docker
+
+steps:
+  - name: publish
+    image: thegeeklab/drone-docker-buildx
+    privileged: true
+    settings:
+      daemon_off: false
+      dockerfile: Dockerfile
+      tags:
+      - latest
+      - php8.1
+      password:
+        from_secret: DOCKER_PASS
+      repo: remco1271/docker-apache-php
+      username:
+        from_secret: docker_username
+      platforms: 
+      - linux/arm64
+      - linux/amd64
+      - linux/arm/v7
+trigger:
+  event:
+  - push
+  - cron
+  - custom
+---
+kind: signature
+hmac: 4ab958994c163a17b60e4c916d63f8706d52f1c422c14d9ddc05b838d95f8e24
+
+...
