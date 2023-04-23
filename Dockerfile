@@ -1,5 +1,5 @@
-FROM phusion/baseimage:focal-1.2.0
-MAINTAINER angelics
+FROM phusion/baseimage:jammy-1.0.1
+MAINTAINER remco1271
 
 # Set correct environment variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -24,6 +24,9 @@ RUN \
 	usermod -g 100 nobody && \
 	usermod -d /home nobody && \
 	chown -R nobody:users /home && \
+	chmod +x /usr/local/bin/add-pkg && \
+	chmod +x /usr/local/bin/del-pkg && \
+	chmod +x /usr/local/bin/sed-patch && \
 	add-pkg \
 		# Install basic compilation tools and dev libraries
 		make \
@@ -31,47 +34,30 @@ RUN \
 		iasl \
 		lzma-dev \
 		mtools \
-		perl \
-		python \
-        subversion \
-		uuid-dev \
-		liblzma-dev \
-		mtools \
-		# Install CGI Perl dependencies
-		liburi-perl \
-		libfcgi-perl \
-		libconfig-inifiles-perl \
-		libipc-system-simple-perl \
-		libsub-override-perl \
-		libcgi-pm-perl \
 		# Install Git tools
 		git \
 		# Install Apache 2 with fast CGI and PHP5 module
 		libapache2-mod-fcgid \
-		libapache2-mod-php \
+		libapache2-mod-php8.1 \
 		apache2 \
-		# Install JSON library Perl
-		libjson-perl \
-		libjson-any-perl \
-		libjson-xs-perl \
-		# Install extra packages to allow to build ISO and EFI binary
-		binutils-dev \
-		genisoimage \
-		syslinux \
-		isolinux \
 		# wget
 		wget \
+		# Install to remove vulnerable version
+		vim \
 		&& \
-	a2enmod fcgid php7.4 && \
-	service apache2 restart && \
-	# Update apache configuration with this one
-	mv /etc/apache2/sites-available/000-default.conf /etc/apache2/000-default.conf && \
+	a2enmod fcgid php8.1 rewrite && \
+	add-pkg \
+		php8.1-mysql \
+		php8.1-zip \
+		php8.1-gd \
+		php8.1-mbstring \
+		php8.1-curl \
+		php8.1-xml \
+		php8.1-bcmath \
+		&& \
 	rm /etc/apache2/sites-available/* && \
 	rm /etc/apache2/apache2.conf && \
-	ln -s /config/proxy-config.conf /etc/apache2/sites-available/000-default.conf && \
-	ln -s /var/log/apache2 /logs && \
 	rm -rf /tmp/* /tmp/.[!.]*
-
 # Copy files
 COPY ipxe /
 
@@ -83,22 +69,25 @@ RUN \
 	echo /var/lock/apache2 > /etc/container_environment/APACHE_LOCK_DIR && \
 	echo /var/run/apache2.pid > /etc/container_environment/APACHE_PID_FILE && \
 	echo /var/run/apache2 > /etc/container_environment/APACHE_RUN_DIR && \
-	# Prepare iPXE directory
-	ln -s /var/cache/ipxe-build /cache && \
-	mkdir -p /var/cache/ipxe-build  && \
-	mkdir -p /var/run/ipxe-build  && \
-	mkdir -p /var/tmp/ipxe-build && \
-	touch /var/run/ipxe-build/ipxe-build-cache.lock && \
 	# Prepare the git buildweb repository
 	mkdir -p /var/www && \
 	# Prepare config folder
 	mkdir -p /config && \
-	ln -s /var/tmp/ipxe /ipxe && \
-	ln -s /var/www/ipxe-buildweb /ipxe-buildweb && \
+	chmod +x /etc/my_init.d/firstrun.sh && \
 	rm -rf /tmp/* /tmp/.[!.]*
+RUN \
+    mkdir -p /web && \
+    # Update apache configuration with this one
+	cp /etc/apache2/000-default.conf /config/proxy-config.conf && \
+	ln -s /config/proxy-config.conf /etc/apache2/sites-available/000-default.conf && \
+	rm /etc/apache2/sites-enabled/000-default.conf && \
+	ln -s /config/proxy-config.conf /etc/apache2/sites-enabled/000-default.conf && \
+	ln -s /var/log/apache2 /logs && \
+    rm -rf /var/lib/apt/lists/* && \
+	rm /config/proxy-config.conf
 
 # Expose Ports
 EXPOSE 80
 
 # The www directory and proxy config location
-VOLUME ["/logs","/ipxe", "/ipxe-buildweb", "/cache"]
+VOLUME ["/logs","/web", "/config"]
