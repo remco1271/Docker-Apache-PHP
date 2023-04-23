@@ -8,3 +8,8 @@ Build it with:
 
 Docker hub:
 https://hub.docker.com/r/remco1271/docker-apache-php
+
+Dirs: 
+`/web` contains the website
+`/config` contains the config file for Apache2
+`/logs` contains the logs of the server
