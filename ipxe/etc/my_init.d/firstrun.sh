@@ -9,6 +9,24 @@ else
   mv /etc/apache2/000-default.conf /config/proxy-config.conf
 fi
 
+# Check if there are files in /web/
+DIR="/web"
+# init
+# look for empty dira
+if [ -d "$DIR" ]
+then
+	if [ "$(ls -A $DIR)" ]; then
+     echo "Leaving content in /web"
+	else
+    echo "$DIR is Empty"
+	touch /web/index.php
+	echo "<?php phpinfo(); ?>" >> /web/index.php
+	echo "Created index.php"
+	fi
+else
+	echo "Directory $DIR not found."
+fi
+
 # Add Persistent Cron Configuration Capability
 if [ -f /config/crons.conf ]; then
   echo "Using existing Cron config file."
