@@ -5,7 +5,7 @@ type: docker
 
 steps:
   - name: publish
-    image: thegeeklab/drone-docker-buildx:24
+    image: thegeeklab/drone-docker-buildx:27
     privileged: true
     settings:
       daemon_off: false
